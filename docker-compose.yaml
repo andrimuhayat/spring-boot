@@ -1,0 +1,42 @@
+version: '3'
+services:
+  db:
+    image: postgres:14.1-alpine
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - '8009:5432'
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/create_tables.sql
+#      - ./db.sh:/docker-entrypoint-initdb.d/init_db.sh
+      - db:/var/lib/postgresql/data
+  app:
+    image: 'auth:latest'
+    container_name: auth
+    depends_on:
+      - db
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "9092:8080"
+    expose:
+      - 9092
+    restart: unless-stopped
+    environment:
+      - TZ=Asia/Jakarta
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://host.docker.internal:8009/postgres
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=postgres
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+    links:
+      - db
+volumes:
+  db:
+    driver: local
+
+networks:
+  webnet:
+    external: true
