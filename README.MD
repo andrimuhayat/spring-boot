@@ -3,7 +3,7 @@
 
 ## Project Description
 
-This service made to containerize the car park service make a clear separation
+This service made to containerize the spring boot service make a clear separation
 of concern within the architecture with [Uncle Bob Clean Architecture](https://www.baeldung.com/spring-boot-clean-architecture) interpretation.
 
 ## Build with
